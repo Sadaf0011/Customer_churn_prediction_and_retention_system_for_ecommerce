@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Churnio — Retention Hub
 
 AI-based customer churn prediction and retention system for e-commerce
@@ -77,3 +78,6 @@ Insights are not written by AI. pandas `groupby` calculates the churn rate of ea
 ## Dataset
 
 E-commerce Customer Churn Analysis and Prediction, by Ankit Verma, Kaggle.
+=======
+# Customer_churn_prediction_and_retention_system_for_ecommerce
+>>>>>>> 2799bb4ff31751f86ef3fbbb7585aa88558736f3
