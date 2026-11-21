@@ -1,0 +1,22 @@
+# =====================================================================
+#  .streamlit/config.toml  —  Streamlit settings
+#  Streamlit reads this file automatically when you run "streamlit run app.py".
+# =====================================================================
+
+[theme]
+# Always use the light theme, even if the computer is in dark mode.
+# (Without this, text can become white on a white background.)
+base = "light"
+
+# Main colour used by Streamlit for buttons, sliders, selected items
+primaryColor = "#4f46e5"
+
+# Page background, background of input boxes, and text colour
+backgroundColor = "#f6f7fb"
+secondaryBackgroundColor = "#eef0f6"
+textColor = "#111827"
+font = "sans serif"
+
+[client]
+# Hide the "Deploy" button and developer menu at the top right
+toolbarMode = "minimal"

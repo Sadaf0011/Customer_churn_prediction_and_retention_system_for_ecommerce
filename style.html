@@ -1,0 +1,544 @@
+<!--
+=====================================================================
+ style.html  —  The design file for the Churnio app
+=====================================================================
+ This file has 4 parts, separated by a special marker line (the word SPLIT inside an HTML comment)
+   PART 1: CSS          → the look of the whole app (colours, fonts, cards, buttons)
+   PART 2: LOGO         → logo shown on the left of the top menu bar
+   PART 3: STATUS       → "Model live" badge shown on the right of the top menu bar
+   PART 4: HOME         → the big welcome section, shown only on the Home page
+
+ app.py splits this file at every marker line and shows each part where it is needed.
+ The clickable menu in the middle of the bar is a real Streamlit radio button
+ (made in app.py). The CSS below only changes how it looks.
+
+ Words in double square brackets, like [[ACCURACY]], are placeholders.
+ app.py replaces them with the real numbers from model.pkl.
+
+ RULES (because Streamlit reads HTML like Markdown):
+   1. No empty lines inside an HTML part (PART 2, 3, 4).
+   2. Start every main HTML tag at the very left, with no spaces before it.
+   3. JavaScript does not run here, so all effects are CSS only.
+=====================================================================
+-->
+<style>
+/* -------------------------------------------------------------
+   STEP 1: Load the font "Inter" from Google Fonts
+   (a clean font used by many professional dashboards)
+   ------------------------------------------------------------- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+/* -------------------------------------------------------------
+   STEP 2: Colour variables (change a colour here, it changes everywhere)
+   ------------------------------------------------------------- */
+:root {
+    --sk-primary: #4f46e5;        /* indigo  → main brand colour        */
+    --sk-primary-dark: #3730a3;   /* dark indigo → hover / gradients    */
+    --sk-primary-soft: #eef2ff;   /* very light indigo → soft backgrounds */
+    --sk-accent: #f59e0b;         /* amber   → small highlights         */
+    --sk-green: #16a34a;          /* green   → good / safe              */
+    --sk-red: #dc2626;            /* red     → high risk                */
+    --sk-text: #111827;           /* almost black → main text           */
+    --sk-muted: #4b5563;          /* dark grey → secondary text         */
+    --sk-border: #e5e7eb;         /* light grey → card borders          */
+    --sk-card: #ffffff;           /* white → card background            */
+    --sk-shadow: 0 1px 3px rgba(17, 24, 39, 0.06), 0 8px 24px rgba(17, 24, 39, 0.06);
+    --sk-radius: 14px;            /* rounded corners                    */
+}
+
+/* -------------------------------------------------------------
+   STEP 3: Font and text colour for the whole app
+   ------------------------------------------------------------- */
+html, body, [class*="css"] {
+    font-family: 'Inter', sans-serif;
+}
+h1, h2, h3, h4 {
+    font-family: 'Inter', sans-serif !important;
+    color: var(--sk-text) !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.02em;
+}
+
+/* -------------------------------------------------------------
+   STEP 4: Page background
+   A plain light-grey background with one very soft indigo glow at the top
+   ------------------------------------------------------------- */
+[data-testid="stAppViewContainer"] {
+    background:
+        radial-gradient(ellipse at 50% -10%, rgba(79, 70, 229, 0.10) 0%, transparent 55%),
+        #f6f7fb;
+}
+
+/* -------------------------------------------------------------
+   STEP 5: Hide Streamlit's own top bar and the sidebar
+   Our own menu bar (made in app.py) replaces them.
+   ------------------------------------------------------------- */
+[data-testid="stHeader"],
+[data-testid="stSidebar"],
+[data-testid="collapsedControl"],
+[data-testid="stSidebarCollapsedControl"] {
+    display: none;
+}
+
+/* Page width and space at the top */
+.block-container {
+    padding-top: 1.5rem;
+    max-width: 1250px;
+}
+
+/* -------------------------------------------------------------
+   STEP 6: THE TOP MENU BAR
+   In app.py the bar is a row of 3 Streamlit columns: logo | menu | status.
+   ":has(.sk-logo)" means: "the row that contains our logo".
+   So these styles change ONLY that row, not other rows in the app.
+   ------------------------------------------------------------- */
+[data-testid="stHorizontalBlock"]:has(.sk-logo) {
+    background: var(--sk-card);
+    border: 1px solid var(--sk-border);
+    border-radius: 999px;
+    padding: 8px 18px;
+    box-shadow: var(--sk-shadow);
+    align-items: center;             /* centre logo, menu and status vertically */
+    margin-bottom: 1.5rem;
+    position: sticky;                /* bar stays at the top while scrolling */
+    top: 0.5rem;
+    z-index: 999;
+}
+
+/* The menu (Streamlit radio) inside the bar: show options in one centred row */
+[data-testid="stHorizontalBlock"]:has(.sk-logo) [role="radiogroup"] {
+    justify-content: center;
+    gap: 6px;
+    flex-wrap: nowrap;
+}
+
+/* Each menu option → looks like a tab button */
+[data-testid="stHorizontalBlock"]:has(.sk-logo) [role="radiogroup"] label {
+    padding: 8px 18px;
+    border-radius: 999px;
+    margin: 0 !important;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+/* Hide the small round circle of the radio button */
+[data-testid="stHorizontalBlock"]:has(.sk-logo) [role="radiogroup"] label > div:first-child {
+    display: none;
+}
+
+/* Text of each menu option */
+[data-testid="stHorizontalBlock"]:has(.sk-logo) [role="radiogroup"] label p {
+    font-weight: 600;
+    font-size: 0.92rem;
+    color: var(--sk-muted);
+}
+
+/* Mouse over an option → light grey background */
+[data-testid="stHorizontalBlock"]:has(.sk-logo) [role="radiogroup"] label:hover {
+    background: #f3f4f6;
+}
+
+/* The selected option → indigo background with white text */
+[data-testid="stHorizontalBlock"]:has(.sk-logo) [role="radiogroup"] label:has(input:checked) {
+    background: var(--sk-primary);
+}
+[data-testid="stHorizontalBlock"]:has(.sk-logo) [role="radiogroup"] label:has(input:checked) p {
+    color: #ffffff;
+}
+
+/* Logo on the left of the bar */
+.sk-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.sk-logo-mark {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--sk-primary), var(--sk-primary-dark));
+    color: #ffffff;
+    font-weight: 800;
+    display: grid;
+    place-items: center;
+    font-size: 1rem;
+}
+.sk-logo-name {
+    font-weight: 800;
+    font-size: 1.05rem;
+    color: var(--sk-text);
+    line-height: 1.1;
+}
+.sk-logo-sub {
+    font-size: 0.72rem;
+    color: var(--sk-muted);
+}
+
+/* Status on the right of the bar */
+.sk-status {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--sk-muted);
+}
+.sk-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--sk-green);
+    box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.18);
+}
+.sk-model-tag {
+    background: var(--sk-primary-soft);
+    color: var(--sk-primary);
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-weight: 700;
+}
+
+/* -------------------------------------------------------------
+   STEP 7: Cards for Streamlit's own boxes
+   st.metric → KPI cards, st.form → the customer form
+   ------------------------------------------------------------- */
+[data-testid="stMetric"],
+[data-testid="stForm"] {
+    background: var(--sk-card);
+    border: 1px solid var(--sk-border);
+    border-radius: var(--sk-radius);
+    box-shadow: var(--sk-shadow);
+    padding: 16px 20px;
+}
+[data-testid="stMetricLabel"] p {
+    color: var(--sk-muted) !important;
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+[data-testid="stMetricValue"] {
+    color: var(--sk-text);
+    font-weight: 700;
+}
+
+/* -------------------------------------------------------------
+   STEP 8: Buttons (Predict, Download)
+   ------------------------------------------------------------- */
+.stButton > button,
+[data-testid="stFormSubmitButton"] > button,
+[data-testid="stDownloadButton"] > button {
+    background: var(--sk-primary);
+    color: #ffffff !important;
+    border: none;
+    border-radius: 10px;
+    padding: 0.6rem 1.6rem;
+    font-weight: 600;
+    transition: background 0.15s ease;
+}
+.stButton > button:hover,
+[data-testid="stFormSubmitButton"] > button:hover,
+[data-testid="stDownloadButton"] > button:hover {
+    background: var(--sk-primary-dark);
+    color: #ffffff !important;
+}
+
+/* -------------------------------------------------------------
+   STEP 9: Tabs (Overview / Segments / Insights / Customers)
+   ------------------------------------------------------------- */
+[data-baseweb="tab-list"] {
+    gap: 4px;
+    border-bottom: 1px solid var(--sk-border);
+}
+[data-baseweb="tab"] {
+    padding: 8px 16px;
+    font-weight: 600;
+}
+[data-baseweb="tab"][aria-selected="true"] p {
+    color: var(--sk-primary);
+}
+
+/* -------------------------------------------------------------
+   STEP 10: Rounded corners for other boxes
+   ------------------------------------------------------------- */
+[data-testid="stAlert"] {
+    border-radius: 12px;
+}
+[data-testid="stDataFrame"] {
+    border: 1px solid var(--sk-border);
+    border-radius: 12px;
+    overflow: hidden;
+}
+[data-testid="stFileUploaderDropzone"] {
+    background: var(--sk-card);
+    border: 2px dashed #c7d2fe;
+    border-radius: var(--sk-radius);
+}
+/* Charts (matplotlib images) sit on white cards */
+[data-testid="stImage"] img {
+    background: #ffffff;
+    border: 1px solid var(--sk-border);
+    border-radius: 12px;
+    padding: 6px;
+}
+
+/* -------------------------------------------------------------
+   STEP 11: Risk badge (shown in the Single Customer result)
+   ------------------------------------------------------------- */
+.sk-badge {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 0.85rem;
+}
+.sk-badge-Critical { background: #7f1d1d; color: #ffffff; }
+.sk-badge-High     { background: #fee2e2; color: #b91c1c; }
+.sk-badge-Medium   { background: #ffedd5; color: #c2410c; }
+.sk-badge-Low      { background: #fef9c3; color: #a16207; }
+.sk-badge-VeryLow  { background: #dcfce7; color: #15803d; }
+
+/* -------------------------------------------------------------
+   STEP 12: Insight cards (Bulk Analysis → Insights tab)
+   A white card with a coloured line on the left
+   ------------------------------------------------------------- */
+.sk-insight {
+    background: var(--sk-card);
+    border: 1px solid var(--sk-border);
+    border-left: 4px solid var(--sk-primary);
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin-bottom: 12px;
+}
+.sk-insight-text {
+    color: var(--sk-text);
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+.sk-insight-action {
+    color: var(--sk-muted);
+    font-size: 0.92rem;
+}
+.sk-insight-action b {
+    color: var(--sk-primary);
+}
+
+/* -------------------------------------------------------------
+   STEP 13: HOME PAGE — hero section (big headline + model card)
+   CSS Grid makes 2 columns: left 1.6 parts, right 1 part
+   ------------------------------------------------------------- */
+.sk-hero {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr;
+    gap: 24px;
+    margin-bottom: 24px;
+}
+.sk-eyebrow {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--sk-primary);
+    background: var(--sk-primary-soft);
+    padding: 6px 12px;
+    border-radius: 999px;
+    margin-bottom: 16px;
+}
+.sk-title {
+    font-size: 2.8rem;
+    line-height: 1.1;
+    font-weight: 800;
+    color: var(--sk-text);
+    letter-spacing: -0.03em;
+    margin-bottom: 14px;
+}
+.sk-title span {
+    color: var(--sk-primary);
+}
+.sk-subtitle {
+    font-size: 1.05rem;
+    color: var(--sk-muted);
+    line-height: 1.6;
+    max-width: 580px;
+    margin-bottom: 22px;
+}
+
+/* "How it works" — 3 steps in a row */
+.sk-steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+.sk-step {
+    background: var(--sk-card);
+    border: 1px solid var(--sk-border);
+    border-radius: 12px;
+    padding: 14px;
+    font-size: 0.88rem;
+    color: var(--sk-text);
+    font-weight: 500;
+}
+.sk-step-num {
+    display: grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--sk-primary);
+    color: #ffffff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+/* White card used on the right (Model performance) */
+.sk-card {
+    background: var(--sk-card);
+    border: 1px solid var(--sk-border);
+    border-radius: var(--sk-radius);
+    box-shadow: var(--sk-shadow);
+    padding: 20px 22px;
+}
+.sk-card-title {
+    font-weight: 700;
+    color: var(--sk-text);
+    margin-bottom: 12px;
+}
+
+/* Half-circle gauge made with CSS only:
+   conic-gradient paints the coloured arc, the ::after circle cuts the middle out,
+   and overflow: hidden shows only the top half.
+   --fill (set in the HTML) = how much of the arc is coloured. */
+.sk-gauge {
+    position: relative;
+    width: 190px;
+    height: 95px;
+    margin: 0 auto 4px auto;
+    overflow: hidden;
+}
+.sk-gauge-ring {
+    width: 190px;
+    height: 190px;
+    border-radius: 50%;
+    background: conic-gradient(from 270deg, var(--sk-primary) 0deg, var(--sk-primary) var(--fill), #e5e7eb var(--fill));
+}
+.sk-gauge-ring::after {
+    content: "";
+    position: absolute;
+    top: 18px;
+    left: 18px;
+    width: 154px;
+    height: 154px;
+    border-radius: 50%;
+    background: #ffffff;
+}
+.sk-gauge-value {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    z-index: 1;
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--sk-text);
+}
+.sk-gauge-label {
+    text-align: center;
+    font-size: 0.78rem;
+    color: var(--sk-muted);
+    margin-bottom: 12px;
+}
+/* Rows under the gauge */
+.sk-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.88rem;
+    padding: 8px 0;
+    border-top: 1px solid var(--sk-border);
+    color: var(--sk-text);
+}
+.sk-row b {
+    color: var(--sk-primary);
+}
+
+/* -------------------------------------------------------------
+   STEP 14: HOME PAGE — stats strip (4 big numbers)
+   ------------------------------------------------------------- */
+.sk-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 28px;
+}
+.sk-stat {
+    background: var(--sk-card);
+    border: 1px solid var(--sk-border);
+    border-radius: var(--sk-radius);
+    padding: 16px 20px;
+}
+.sk-stat-number {
+    font-size: 1.7rem;
+    font-weight: 800;
+    color: var(--sk-text);
+}
+.sk-stat-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--sk-muted);
+}
+
+/* -------------------------------------------------------------
+   STEP 15: Small screens (phones): stack everything in 1 column
+   ------------------------------------------------------------- */
+@media (max-width: 900px) {
+    .sk-hero  { grid-template-columns: 1fr; }
+    .sk-steps { grid-template-columns: 1fr; }
+    .sk-stats { grid-template-columns: repeat(2, 1fr); }
+    .sk-title { font-size: 2rem; }
+    [data-testid="stHorizontalBlock"]:has(.sk-logo) { border-radius: 16px; }
+}
+</style>
+<!-- SPLIT -->
+<!-- PART 2: LOGO (left side of the top menu bar) -->
+<div class="sk-logo">
+<div class="sk-logo-mark">C</div>
+<div><div class="sk-logo-name">Churnio</div><div class="sk-logo-sub">Retention Hub</div></div>
+</div>
+<!-- SPLIT -->
+<!-- PART 3: STATUS (right side of the top menu bar) -->
+<div class="sk-status">
+<span class="sk-dot"></span>Model live
+<span class="sk-model-tag">[[MODEL_NAME]]</span>
+</div>
+<!-- SPLIT -->
+<!-- PART 4: HOME PAGE (headline, how it works, model card, stats) -->
+<div class="sk-hero">
+<div>
+<div class="sk-eyebrow">AI-powered customer retention</div>
+<div class="sk-title">Every lost customer is a lost sale. <span>Find them before they leave.</span></div>
+<div class="sk-subtitle">Predict which shoppers are about to stop buying, understand why, and win them back with the right coupon at the right time.</div>
+<div class="sk-steps">
+<div class="sk-step"><div class="sk-step-num">1</div>Open <b>Single Customer</b> or <b>Bulk Analysis</b> from the top menu</div>
+<div class="sk-step"><div class="sk-step-num">2</div>Enter one customer's details or upload a CSV file</div>
+<div class="sk-step"><div class="sk-step-num">3</div>Get churn risk, reasons, coupons and business insights</div>
+</div>
+</div>
+<div class="sk-card">
+<div class="sk-card-title">Model performance</div>
+<div class="sk-gauge">
+<div class="sk-gauge-ring" style="--fill: [[GAUGE_DEG]]deg;"></div>
+<div class="sk-gauge-value">[[ACCURACY]]%</div>
+</div>
+<div class="sk-gauge-label">Test accuracy ([[MODEL_NAME]])</div>
+<div class="sk-row">Recall (churners caught) <b>[[RECALL]]%</b></div>
+<div class="sk-row">F1 score <b>[[F1]]</b></div>
+<div class="sk-row">ROC-AUC <b>[[AUC]]</b></div>
+</div>
+</div>
+<div class="sk-stats">
+<div class="sk-stat"><div class="sk-stat-number">[[CUSTOMERS]]</div><div class="sk-stat-label">Customers trained on</div></div>
+<div class="sk-stat"><div class="sk-stat-number">18</div><div class="sk-stat-label">Customer signals used</div></div>
+<div class="sk-stat"><div class="sk-stat-number">6</div><div class="sk-stat-label">Models compared</div></div>
+<div class="sk-stat"><div class="sk-stat-number">[[CORE_ACCURACY]]%</div><div class="sk-stat-label">Core model accuracy (8 columns)</div></div>
+</div>
