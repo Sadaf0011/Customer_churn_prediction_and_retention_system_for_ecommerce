@@ -76,6 +76,6 @@ Insights are not written by AI. pandas `groupby` calculates the churn rate of ea
 
 ## Dataset
 
-E-commerce Customer Churn Analysis and Prediction, by Ankit Verma, Kaggle.
+E-commerce Customer Churn Analysis and Prediction.
 =======
 
